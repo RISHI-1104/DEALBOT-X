@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dealbot.X — Manage. Track. Grow.</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2D2B8F;
+    --accent: #7B6FD4;
+    --light-accent: #A89EE8;
+    --bg: #08080F;
+    --surface: #0F0F1A;
+    --surface2: #14142A;
+    --border: rgba(123,111,212,0.15);
+    --text: #F0EFF8;
+    --muted: #8884AA;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+    overflow-x: hidden;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(8,8,15,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .nav-logo span {
+    background: linear-gradient(90deg, var(--primary), var(--light-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: var(--text) !important;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    transition: opacity 0.2s !important;
+  }
+
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,43,143,0.25) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(123,111,212,0.1);
+    border: 1px solid rgba(123,111,212,0.25);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--light-accent);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--light-accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(42px, 6vw, 80px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  h1 .gradient {
+    background: linear-gradient(135deg, #7B6FD4 0%, #A89EE8 50%, #2D2B8F 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 32px rgba(123,111,212,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 48px rgba(123,111,212,0.45);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--muted);
+    padding: 14px 32px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border);
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .btn-secondary:hover {
+    color: var(--text);
+    border-color: rgba(123,111,212,0.4);
+  }
+
+  /* ─── STATS ─── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 64px;
+    margin-top: 80px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    width: 100%;
+    max-width: 700px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .stat-item { text-align: center; }
+
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--light-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  /* ─── SECTION ─── */
+  section {
+    padding: 100px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 3.5vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 500px;
+    line-height: 1.65;
+  }
+
+  /* ─── PROBLEMS ─── */
+  .problems-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 56px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .problem-card {
+    background: var(--surface);
+    padding: 32px 28px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+
+  .problem-card:hover { background: var(--surface2); }
+
+  .problem-card:nth-child(3n) { border-right: none; }
+  .problem-card:nth-last-child(-n+3) { border-bottom: none; }
+
+  .problem-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(123,111,212,0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .problem-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--accent);
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .problem-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .problem-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─── FEATURES ─── */
+  .features-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-top: 56px;
+    align-items: start;
+  }
+
+  .feature-list { display: flex; flex-direction: column; gap: 4px; }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .feature-item:hover, .feature-item.active {
+    background: var(--surface);
+    border-color: var(--border);
+  }
+
+  .feature-item.active .feature-dot {
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(123,111,212,0.5);
+  }
+
+  .feature-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    margin-top: 6px;
+    flex-shrink: 0;
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
+  .feature-text-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .feature-text-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .feature-preview {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    position: sticky;
+    top: 100px;
+  }
+
+  .preview-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+
+  .preview-screen {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .preview-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .preview-row:last-child { border-bottom: none; }
+
+  .preview-key { font-size: 12px; color: var(--muted); }
+
+  .preview-val {
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .preview-val.green { color: #5ECA8A; }
+  .preview-val.red { color: #E07070; }
+  .preview-val.purple { color: var(--light-accent); }
+
+  /* ─── PHASES ─── */
+  .phases-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 56px;
+  }
+
+  .phase-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .phase-card:hover { border-color: rgba(123,111,212,0.4); }
+
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .phase-card.p1::before { background: linear-gradient(90deg, var(--primary), var(--accent)); }
+  .phase-card.p2::before { background: linear-gradient(90deg, var(--accent), var(--light-accent)); }
+  .phase-card.p3::before { background: linear-gradient(90deg, var(--light-accent), #C4BBF5); }
+
+  .phase-num {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  .phase-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .phase-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .phase-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .phase-feature {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .phase-feature::before {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background: var(--accent);
+    flex-shrink: 0;
+  }
+
+  /* ─── CTA ─── */
+  .cta-section {
+    text-align: center;
+    padding: 120px 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-inner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 80px 60px;
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(123,111,212,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .cta-inner h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .cta-inner p {
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--muted);
+  }
+
+  .footer-tagline {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 60px 24px; }
+    .problems-grid { grid-template-columns: 1fr 1fr; }
+    .features-layout { grid-template-columns: 1fr; }
+    .phases-grid { grid-template-columns: 1fr; }
+    .stats-bar { gap: 32px; }
+    .cta-section { padding: 60px 24px; }
+    .cta-inner { padding: 48px 28px; }
+    footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px; }
+  }
+
+  @media (max-width: 600px) {
+    .problems-grid { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; width: 100%; max-width: 300px; }
+    .btn-primary, .btn-secondary { text-align: center; }
+    .stats-bar { flex-direction: column; gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">DEALBOT<span>.X</span></div>
+  <ul class="nav-links">
+    <li><a href="#problems">Problems</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#" class="nav-cta">Get Early Access</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge">
+    <div class="hero-badge-dot"></div>
+    Built for India's 63 million small businesses
+  </div>
+  <h1>
+    Your business.<br>
+    <span class="gradient">Finally in control.</span>
+  </h1>
+  <p class="hero-sub">
+    Dealbot.X is an AI-powered business tool built for kirana shops, local vendors, and small retailers in Tamil Nadu — in their language, on their phone.
+  </p>
+  <div class="hero-actions">
+    <a href="#" class="btn-primary">Get Early Access</a>
+    <a href="#features" class="btn-secondary">See Features</a>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-number">63M+</div>
+      <div class="stat-label">Small businesses in India</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">Rs.22K</div>
+      <div class="stat-label">Average udhari per shop</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">35 min</div>
+      <div class="stat-label">Saved daily per owner</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEMS -->
+<section id="problems">
+  <div class="reveal">
+    <div class="section-label">The Problem</div>
+    <div class="section-title">What keeps shop owners<br>up at night</div>
+    <p class="section-sub">63 million small businesses in India run on paper notebooks, memory, and four different UPI apps — every single day.</p>
+  </div>
+  <div class="problems-grid reveal">
+    <div class="problem-card">
+      <div class="problem-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 5v5l4 2"/></svg>
+      </div>
+      <div class="problem-title">Udhari chaos</div>
+      <div class="problem-desc">Rs.8,000–22,000 stuck in unpaid customer credit. Tracked in a paper notebook that gets wet and torn.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+      </div>
+      <div class="problem-title">UPI reconciliation</div>
+      <div class="problem-desc">4 apps, 20–35 minutes every night to manually match payments. One missed payment breaks a customer relationship.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      </div>
+      <div class="problem-title">GST terror</div>
+      <div class="problem-desc">Quarterly filing costs Rs.6,000–12,000/year for a CA. English-only portal. Most owners give up entirely.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">
+        <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      </div>
+      <div class="problem-title">Inventory blindness</div>
+      <div class="problem-desc">Stock managed by eye. 35% of customers never return after two consecutive stockouts. Dead stock blocks cash.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="problem-title">No customer memory</div>
+      <div class="problem-desc">200 regular customers. Zero data about them. No way to know who stopped coming or who deserves a loyalty reward.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.12 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16z"/></svg>
+      </div>
+      <div class="problem-title">Marketing blackout</div>
+      <div class="problem-desc">Festival offers missed. No Tamil content tools. WhatsApp broadcast fails because customers never saved the number.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="reveal">
+    <div class="section-label">The Solution</div>
+    <div class="section-title">Everything your shop needs.<br>Nothing it doesn't.</div>
+    <p class="section-sub">Built mobile-first, Tamil-first, and offline-first — for the reality of running a small business in India.</p>
+  </div>
+  <div class="features-layout">
+    <div class="feature-list reveal">
+      <div class="feature-item active" onclick="setFeature(0, this)">
+        <div class="feature-dot"></div>
+        <div>
+          <div class="feature-text-title">Digital Udhari Ledger</div>
+          <div class="feature-text-desc">Track every credit given, auto-send polite Tamil WhatsApp reminders on day 7 and day 14. Recover 60–70% of pending dues without awkward conversations.</div>
+        </div>
+      </div>
+      <div class="feature-item" onclick="setFeature(1, this)">
+        <div class="feature-dot"></div>
+        <div>
+          <div class="feature-text-title">UPI Payment Tracker</div>
+          <div class="feature-text-desc">Reads UPI SMS from PhonePe, GPay, Paytm and BHIM. Auto-matches each payment to the right customer. Zero manual reconciliation.</div>
+        </div>
+      </div>
+      <div class="feature-item" onclick="setFeature(2, this)">
+        <div class="feature-dot"></div>
+        <div>
+          <div class="feature-text-title">Daily P&L in Tamil</div>
+          <div class="feature-text-desc">Every night: one plain-language sentence. "Inru Rs.4,200 vitreer. Rs.3,400 labam." No accounting jargon. No spreadsheets.</div>
+        </div>
+      </div>
+      <div class="feature-item" onclick="setFeature(3, this)">
+        <div class="feature-dot"></div>
+        <div>
+          <div class="feature-text-title">GST Invoice Generator</div>
+          <div class="feature-text-desc">One tap to generate a GST-compliant invoice with auto-suggested HSN codes. Delivered to customer WhatsApp in 10 seconds. Auto-logged to GSTR-1 draft.</div>
+        </div>
+      </div>
+      <div class="feature-item" onclick="setFeature(4, this)">
+        <div class="feature-dot"></div>
+        <div>
+          <div class="feature-text-title">Festival Offer AI</div>
+          <div class="feature-text-desc">29+ festivals tracked. 3 days before each — auto prompt. One tap generates a Tamil offer image and sends to all your regulars. Rs.2,000–6,000 extra per festival.</div>
+        </div>
+      </div>
+      <div class="feature-item" onclick="setFeature(5, this)">
+        <div class="feature-dot"></div>
+        <div>
+          <div class="feature-text-title">Voice Entry in Tamil</div>
+          <div class="feature-text-desc">Say "Ramesh 450 vaanginaan" — auto-logged to his udhari account in 2 seconds. No typing. Works offline. Kills the paper khaata habit in two weeks.</div>
+        </div>
+      </div>
+    </div>
+    <div class="feature-preview reveal">
+      <div class="preview-label">Live Preview</div>
+      <div id="preview-screen" class="preview-screen">
+        <div class="preview-row">
+          <span class="preview-key">Today's Sales</span>
+          <span class="preview-val green">Rs. 4,200</span>
+        </div>
+        <div class="preview-row">
+          <span class="preview-key">Pending Udhari</span>
+          <span class="preview-val red">Rs. 8,450</span>
+        </div>
+        <div class="preview-row">
+          <span class="preview-key">UPI Collected</span>
+          <span class="preview-val green">Rs. 3,100</span>
+        </div>
+        <div class="preview-row">
+          <span class="preview-key">Today's Profit</span>
+          <span class="preview-val purple">Rs. 3,400</span>
+        </div>
+        <div class="preview-row">
+          <span class="preview-key">Reminders Sent</span>
+          <span class="preview-val purple">6 customers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="reveal">
+    <div class="section-label">Roadmap</div>
+    <div class="section-title">Built in phases.<br>Free at every step.</div>
+    <p class="section-sub">We launch with what matters most — then grow from there. Every core feature stays free, forever.</p>
+  </div>
+  <div class="phases-grid">
+    <div class="phase-card p1 reveal">
+      <div class="phase-num">Phase 01 — Launch</div>
+      <div class="phase-title">Core Operations</div>
+      <div class="phase-desc">The daily tools every shop needs to replace paper.</div>
+      <div class="phase-features">
+        <div class="phase-feature">Digital udhari ledger</div>
+        <div class="phase-feature">UPI payment tracking</div>
+        <div class="phase-feature">Auto WhatsApp reminders</div>
+        <div class="phase-feature">Daily P&L summary</div>
+        <div class="phase-feature">Customer profiles</div>
+        <div class="phase-feature">Offline mode</div>
+      </div>
+    </div>
+    <div class="phase-card p2 reveal">
+      <div class="phase-num">Phase 02 — Growth</div>
+      <div class="phase-title">AI-Powered Features</div>
+      <div class="phase-desc">Smarter tools that save time and increase revenue.</div>
+      <div class="phase-features">
+        <div class="phase-feature">Voice entry in Tamil</div>
+        <div class="phase-feature">GST invoice generator</div>
+        <div class="phase-feature">Festival offer AI</div>
+        <div class="phase-feature">Inventory alerts</div>
+        <div class="phase-feature">Customer loyalty points</div>
+        <div class="phase-feature">Social media content AI</div>
+      </div>
+    </div>
+    <div class="phase-card p3 reveal">
+      <div class="phase-num">Phase 03 — Scale</div>
+      <div class="phase-title">Business Intelligence</div>
+      <div class="phase-desc">Tools that unlock formal credit and multi-staff operations.</div>
+      <div class="phase-features">
+        <div class="phase-feature">Bank loan P&L export</div>
+        <div class="phase-feature">GSTR-1 auto draft</div>
+        <div class="phase-feature">Multi-staff access</div>
+        <div class="phase-feature">Sales analytics</div>
+        <div class="phase-feature">WhatsApp broadcast</div>
+        <div class="phase-feature">Telugu and Hindi support</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-inner reveal">
+    <h2>Your shop deserves<br>better tools.</h2>
+    <p>Join the waitlist. Be the first in Tamil Nadu to run your business the smart way — free, offline-ready, and in your language.</p>
+    <a href="#" class="btn-primary">Join the Waitlist</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DEALBOT.X</div>
+  <div class="footer-tagline">Manage — Track — Grow</div>
+  <div class="footer-tagline" style="color: var(--muted); font-size: 12px;">Built in Coimbatore for India</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Feature previews
+  const previews = [
+    [
+      { key: "Ramesh Kumar", val: "Rs. 450 pending", cls: "red" },
+      { key: "Priya Store", val: "Rs. 1,200 pending", cls: "red" },
+      { key: "Kumar Anna", val: "Paid today", cls: "green" },
+      { key: "Total Udhari", val: "Rs. 8,450", cls: "purple" },
+      { key: "Reminders Sent", val: "6 auto-sent", cls: "purple" }
+    ],
+    [
+      { key: "PhonePe", val: "Rs. 1,200", cls: "green" },
+      { key: "GPay", val: "Rs. 950", cls: "green" },
+      { key: "Paytm", val: "Rs. 650", cls: "green" },
+      { key: "Cash", val: "Rs. 1,400", cls: "green" },
+      { key: "Total Collected", val: "Rs. 4,200", cls: "purple" }
+    ],
+    [
+      { key: "Sales Today", val: "Rs. 4,200", cls: "green" },
+      { key: "Expenses", val: "Rs. 800", cls: "red" },
+      { key: "Net Profit", val: "Rs. 3,400", cls: "green" },
+      { key: "Best Day This Week", val: "Yes", cls: "purple" },
+      { key: "Weekly Trend", val: "+12%", cls: "green" }
+    ],
+    [
+      { key: "Invoice #1042", val: "Generated", cls: "green" },
+      { key: "GST Amount", val: "Rs. 54 (18%)", cls: "purple" },
+      { key: "HSN Code", val: "Auto-filled", cls: "green" },
+      { key: "Sent via WhatsApp", val: "Done", cls: "green" },
+      { key: "GSTR-1 Status", val: "Auto-logged", cls: "purple" }
+    ],
+    [
+      { key: "Festival", val: "Pongal — 3 days", cls: "purple" },
+      { key: "Offer Created", val: "10% on rice+oil", cls: "green" },
+      { key: "Image Generated", val: "Tamil poster", cls: "green" },
+      { key: "Customers Reached", val: "180 regulars", cls: "green" },
+      { key: "Expected Revenue", val: "+Rs. 4,000", cls: "green" }
+    ],
+    [
+      { key: "Voice Input", val: '"Ramesh 450 vaanginaan"', cls: "purple" },
+      { key: "Customer Matched", val: "Ramesh Kumar", cls: "green" },
+      { key: "Amount Logged", val: "Rs. 450 credit", cls: "red" },
+      { key: "Time Taken", val: "2 seconds", cls: "green" },
+      { key: "Khaata Updated", val: "Automatic", cls: "purple" }
+    ]
+  ];
+
+  function setFeature(index, el) {
+    document.querySelectorAll('.feature-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    const screen = document.getElementById('preview-screen');
+    screen.innerHTML = previews[index].map(r =>
+      `<div class="preview-row">
+        <span class="preview-key">${r.key}</span>
+        <span class="preview-val ${r.cls}">${r.val}</span>
+      </div>`
+    ).join('');
+  }
+</script>
+</body>
+</html>
