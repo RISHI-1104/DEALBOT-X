@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dealbot.X — CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2D2B8F;
+    --accent: #7B6FD4;
+    --light-accent: #A89EE8;
+    --bg: #08080F;
+    --surface: #0F0F1A;
+    --surface2: #14142A;
+    --surface3: #1A1A35;
+    --border: rgba(123,111,212,0.15);
+    --border2: rgba(123,111,212,0.25);
+    --text: #F0EFF8;
+    --muted: #7A7899;
+    --green: #4EC994;
+    --red: #E06B6B;
+    --amber: #E8A84A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+  }
+
+  /* ── LAYOUT ── */
+  .app { display: flex; height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+
+  .sidebar-logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .logo-text span {
+    background: linear-gradient(90deg, var(--accent), var(--light-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .nav-section {
+    padding: 16px 12px 8px;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0 8px;
+    margin-bottom: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+
+  .nav-item.active {
+    background: rgba(123,111,212,0.12);
+    color: var(--light-accent);
+  }
+
+  .nav-item svg {
+    width: 16px; height: 16px;
+    stroke: currentColor; fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
+  .nav-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  .sidebar-bottom {
+    margin-top: auto;
+    padding: 16px 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .shop-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+
+  .shop-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .shop-plan {
+    font-size: 11px;
+    color: var(--accent);
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .topbar {
+    height: 60px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    flex-shrink: 0;
+    background: var(--surface);
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .topbar-date {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .btn svg {
+    width: 14px; height: 14px;
+    stroke: currentColor; fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+  }
+
+  .btn-primary:hover { opacity: 0.88; }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+  }
+
+  .content::-webkit-scrollbar { width: 4px; }
+  .content::-webkit-scrollbar-track { background: transparent; }
+  .content::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+  /* ── PAGES ── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── DASHBOARD ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .stat-card.s1::before { background: linear-gradient(90deg, var(--green), #2ECC71); }
+  .stat-card.s2::before { background: linear-gradient(90deg, var(--red), #FF6B6B); }
+  .stat-card.s3::before { background: linear-gradient(90deg, var(--accent), var(--light-accent)); }
+  .stat-card.s4::before { background: linear-gradient(90deg, var(--amber), #F0C040); }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--red); }
+  .stat-value.purple { color: var(--light-accent); }
+  .stat-value.amber { color: var(--amber); }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-title-action {
+    font-size: 11px;
+    color: var(--accent);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  /* ── TABLE ── */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .table-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    width: 220px;
+  }
+
+  .search-box svg {
+    width: 14px; height: 14px;
+    stroke: var(--muted); fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+
+  .search-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    width: 100%;
+  }
+
+  .search-box input::placeholder { color: var(--muted); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    padding: 10px 20px;
+    text-align: left;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+
+  tbody td {
+    padding: 13px 20px;
+    font-size: 13px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .badge-red { background: rgba(224,107,107,0.12); color: var(--red); }
+  .badge-green { background: rgba(78,201,148,0.12); color: var(--green); }
+  .badge-amber { background: rgba(232,168,74,0.12); color: var(--amber); }
+  .badge-purple { background: rgba(123,111,212,0.12); color: var(--light-accent); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 28px;
+    width: 480px;
+    max-width: 95vw;
+    animation: modalIn 0.2s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+  .form-group { margin-bottom: 16px; }
+
+  .form-label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--accent); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    justify-content: flex-end;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+  }
+
+  .empty-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    margin-top: 16px;
+  }
+
+  .empty svg {
+    width: 40px; height: 40px;
+    stroke: var(--border2); fill: none;
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ── UDHARI LIST ── */
+  .udhari-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .udhari-item:last-child { border-bottom: none; }
+
+  .udhari-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .udhari-info { flex: 1; padding: 0 12px; }
+
+  .udhari-name {
+    font-weight: 500;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .udhari-date { font-size: 11px; color: var(--muted); }
+
+  .udhari-amount {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--red);
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 999;
+    display: none;
+    animation: toastIn 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .toast.show { display: block; }
+  .toast.success { border-left: 3px solid var(--green); }
+  .toast.error { border-left: 3px solid var(--red); }
+
+  @keyframes toastIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── AI PANEL ── */
+  .ai-panel {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .ai-label {
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .ai-insight {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .ai-insight span { color: var(--light-accent); font-weight: 500; }
+
+  /* ── SCROLLBAR GLOBAL ── */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border2) transparent;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .sidebar { width: 60px; }
+    .sidebar-logo, .nav-label, .nav-item span, .shop-card { display: none; }
+    .nav-item { justify-content: center; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .grid2 { grid-template-columns: 1fr; }
+    .content { padding: 16px; }
+    .topbar { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">DEALBOT<span>.X</span></div>
+      <div class="logo-sub">Manage · Track · Grow</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Main</div>
+      <div class="nav-item active" onclick="showPage('dashboard', this)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span>Dashboard</span>
+      </div>
+      <div class="nav-item" onclick="showPage('customers', this)">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Customers</span>
+      </div>
+      <div class="nav-item" onclick="showPage('udhari', this)">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 5v5l4 2"/></svg>
+        <span>Udhari</span>
+        <span class="nav-badge" id="udhari-badge">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('payments', this)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        <span>Payments</span>
+      </div>
+      <div class="nav-item" onclick="showPage('inventory', this)">
+        <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <span>Inventory</span>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <div class="nav-item" onclick="showPage('gst', this)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+        <span>GST Invoice</span>
+      </div>
+      <div class="nav-item" onclick="showPage('reports', this)">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Reports</span>
+      </div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="shop-card">
+        <div class="shop-name" id="shop-name-display">My Shop</div>
+        <div class="shop-plan">Free Plan</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="page-title" id="page-title">Dashboard</div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="topbar-date"></div>
+        <button class="btn btn-primary" id="primary-action-btn" onclick="handlePrimaryAction()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Customer
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD PAGE -->
+      <div class="page active" id="page-dashboard">
+        <div class="ai-panel">
+          <div class="ai-label">AI Insight — Today</div>
+          <div class="ai-insight" id="ai-insight">Loading your business summary...</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card s1">
+            <div class="stat-label">Today's Sales</div>
+            <div class="stat-value green" id="stat-sales">Rs. 0</div>
+            <div class="stat-sub">0 transactions</div>
+          </div>
+          <div class="stat-card s2">
+            <div class="stat-label">Total Udhari</div>
+            <div class="stat-value red" id="stat-udhari">Rs. 0</div>
+            <div class="stat-sub" id="stat-udhari-count">0 customers</div>
+          </div>
+          <div class="stat-card s3">
+            <div class="stat-label">UPI Collected</div>
+            <div class="stat-value purple" id="stat-upi">Rs. 0</div>
+            <div class="stat-sub">Today</div>
+          </div>
+          <div class="stat-card s4">
+            <div class="stat-label">Net Profit</div>
+            <div class="stat-value amber" id="stat-profit">Rs. 0</div>
+            <div class="stat-sub">Today</div>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">
+              Recent Udhari
+              <span class="card-title-action" onclick="showPage('udhari', document.querySelector('[onclick*=udhari]'))">View all</span>
+            </div>
+            <div id="dashboard-udhari-list">
+              <div class="empty">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                <div class="empty-title">No udhari yet</div>
+                <div>Add customers and track credit</div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">
+              Recent Payments
+              <span class="card-title-action" onclick="showPage('payments', document.querySelector('[onclick*=payments]'))">View all</span>
+            </div>
+            <div id="dashboard-payment-list">
+              <div class="empty">
+                <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                <div class="empty-title">No payments yet</div>
+                <div>Log UPI and cash payments</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUSTOMERS PAGE -->
+      <div class="page" id="page-customers">
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="table-title">All Customers</div>
+            <div class="search-box">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="Search customers..." oninput="filterCustomers(this.value)">
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Total Udhari</th>
+                <th>Last Visit</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="customers-table-body">
+              <tr>
+                <td colspan="6">
+                  <div class="empty">
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    <div class="empty-title">No customers added</div>
+                    <div>Click "Add Customer" to get started</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- UDHARI PAGE -->
+      <div class="page" id="page-udhari">
+        <div class="stats-grid" style="grid-template-columns: repeat(3,1fr); margin-bottom: 20px;">
+          <div class="stat-card s2">
+            <div class="stat-label">Total Outstanding</div>
+            <div class="stat-value red" id="udhari-total">Rs. 0</div>
+            <div class="stat-sub" id="udhari-customers-count">0 customers</div>
+          </div>
+          <div class="stat-card s3">
+            <div class="stat-label">Collected This Month</div>
+            <div class="stat-value purple" id="udhari-collected">Rs. 0</div>
+            <div class="stat-sub">Recovered</div>
+          </div>
+          <div class="stat-card s1">
+            <div class="stat-label">Reminders Sent</div>
+            <div class="stat-value green" id="udhari-reminders">0</div>
+            <div class="stat-sub">Auto WhatsApp</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="table-title">Udhari Ledger</div>
+            <button class="btn btn-ghost" onclick="sendAllReminders()">
+              <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.12 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 21 16z"/></svg>
+              Send All Reminders
+            </button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Amount Due</th>
+                <th>Date Added</th>
+                <th>Days Pending</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="udhari-table-body">
+              <tr>
+                <td colspan="6">
+                  <div class="empty">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                    <div class="empty-title">No udhari records</div>
+                    <div>Add udhari from the Customers page</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAYMENTS PAGE -->
+      <div class="page" id="page-payments">
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="table-title">Payment Records</div>
+            <div style="display:flex;gap:8px;">
+              <select class="form-input" style="width:140px;padding:7px 12px;" onchange="filterPayments(this.value)">
+                <option value="all">All Types</option>
+                <option value="UPI">UPI</option>
+                <option value="Cash">Cash</option>
+                <option value="Udhari Collected">Udhari Collected</option>
+              </select>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody id="payments-table-body">
+              <tr>
+                <td colspan="5">
+                  <div class="empty">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                    <div class="empty-title">No payments recorded</div>
+                    <div>Click "Add Payment" to log a payment</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INVENTORY PAGE -->
+      <div class="page" id="page-inventory">
+        <div class="table-wrap">
+          <div class="table-header">
+            <div class="table-title">Inventory</div>
+            <div class="search-box">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="Search items..." oninput="filterInventory(this.value)">
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Stock</th>
+                <th>Min Stock</th>
+                <th>Price (Rs.)</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="inventory-table-body">
+              <tr>
+                <td colspan="6">
+                  <div class="empty">
+                    <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    <div class="empty-title">No inventory items</div>
+                    <div>Click "Add Item" to start tracking stock</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- GST PAGE -->
+      <div class="page" id="page-gst">
+        <div class="grid2">
+          <div class="card">
+            <div class="card-title">Generate GST Invoice</div>
+            <div class="form-group">
+              <label class="form-label">Customer Name</label>
+              <input class="form-input" id="gst-customer" placeholder="Customer name or business">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Customer Phone</label>
+              <input class="form-input" id="gst-phone" placeholder="10-digit mobile number">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Item Description</label>
+              <input class="form-input" id="gst-item" placeholder="Product or service name">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Amount (Rs.)</label>
+                <input class="form-input" id="gst-amount" type="number" placeholder="0" oninput="calcGST()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">GST Rate</label>
+                <select class="form-input" id="gst-rate" onchange="calcGST()">
+                  <option value="0">0% (Exempt)</option>
+                  <option value="5">5% GST</option>
+                  <option value="12" selected>12% GST</option>
+                  <option value="18">18% GST</option>
+                  <option value="28">28% GST</option>
+                </select>
+              </div>
+            </div>
+            <div class="ai-panel" id="gst-preview" style="display:none;">
+              <div class="ai-label">Invoice Preview</div>
+              <div id="gst-calc-result"></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;" onclick="generateGSTInvoice()">
+              Generate Invoice
+            </button>
+          </div>
+          <div class="card">
+            <div class="card-title">Recent Invoices</div>
+            <div id="gst-invoice-list">
+              <div class="empty">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <div class="empty-title">No invoices yet</div>
+                <div>Generate your first GST invoice</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS PAGE -->
+      <div class="page" id="page-reports">
+        <div class="stats-grid" style="margin-bottom:20px;">
+          <div class="stat-card s1">
+            <div class="stat-label">Total Sales</div>
+            <div class="stat-value green" id="report-sales">Rs. 0</div>
+            <div class="stat-sub">All time</div>
+          </div>
+          <div class="stat-card s2">
+            <div class="stat-label">Total Payments</div>
+            <div class="stat-value red" id="report-payments">Rs. 0</div>
+            <div class="stat-sub">Collected</div>
+          </div>
+          <div class="stat-card s3">
+            <div class="stat-label">Total Customers</div>
+            <div class="stat-value purple" id="report-customers">0</div>
+            <div class="stat-sub">Registered</div>
+          </div>
+          <div class="stat-card s4">
+            <div class="stat-label">Outstanding</div>
+            <div class="stat-value amber" id="report-outstanding">Rs. 0</div>
+            <div class="stat-sub">Pending udhari</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Business Summary</div>
+          <div id="report-summary" class="ai-insight" style="line-height:2;">
+            Add customers, payments and udhari to see your business report here.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ADD CUSTOMER MODAL -->
+<div class="modal-overlay" id="modal-customer">
+  <div class="modal">
+    <div class="modal-title">Add Customer</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" id="c-name" placeholder="Customer name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input class="form-input" id="c-phone" placeholder="10-digit number">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Address (Optional)</label>
+      <input class="form-input" id="c-address" placeholder="Area or street">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Initial Udhari (Rs.)</label>
+      <input class="form-input" id="c-udhari" type="number" placeholder="0 if none">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-customer')">Cancel</button>
+      <button class="btn btn-primary" onclick="addCustomer()">Add Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PAYMENT MODAL -->
+<div class="modal-overlay" id="modal-payment">
+  <div class="modal">
+    <div class="modal-title">Log Payment</div>
+    <div class="form-group">
+      <label class="form-label">Customer Name</label>
+      <input class="form-input" id="p-customer" placeholder="Customer name">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Amount (Rs.)</label>
+        <input class="form-input" id="p-amount" type="number" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Payment Type</label>
+        <select class="form-input" id="p-type">
+          <option value="UPI">UPI</option>
+          <option value="Cash">Cash</option>
+          <option value="Udhari Collected">Udhari Collected</option>
+          <option value="Card">Card</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Note (Optional)</label>
+      <input class="form-input" id="p-note" placeholder="What was this payment for?">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-payment')">Cancel</button>
+      <button class="btn btn-primary" onclick="addPayment()">Log Payment</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD UDHARI MODAL -->
+<div class="modal-overlay" id="modal-udhari">
+  <div class="modal">
+    <div class="modal-title">Add Udhari</div>
+    <div class="form-group">
+      <label class="form-label">Customer Name</label>
+      <input class="form-input" id="u-customer" placeholder="Customer name">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <input class="form-input" id="u-phone" placeholder="For WhatsApp reminder">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Amount (Rs.)</label>
+        <input class="form-input" id="u-amount" type="number" placeholder="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Item / Note</label>
+      <input class="form-input" id="u-note" placeholder="What did they take?">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-udhari')">Cancel</button>
+      <button class="btn btn-primary" onclick="addUdhari()">Add Udhari</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD INVENTORY MODAL -->
+<div class="modal-overlay" id="modal-inventory">
+  <div class="modal">
+    <div class="modal-title">Add Inventory Item</div>
+    <div class="form-group">
+      <label class="form-label">Product Name</label>
+      <input class="form-input" id="i-name" placeholder="e.g. Aavin Milk 500ml">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Current Stock</label>
+        <input class="form-input" id="i-stock" type="number" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Min Stock (Alert)</label>
+        <input class="form-input" id="i-min" type="number" placeholder="5">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Price (Rs.)</label>
+      <input class="form-input" id="i-price" type="number" placeholder="0">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-inventory')">Cancel</button>
+      <button class="btn btn-primary" onclick="addInventoryItem()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE + APP LOGIC -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAuKUN8-nU22DtAd4vC4lSWsk5BMIwc7zc",
+    authDomain: "dealbot-x.firebaseapp.com",
+    projectId: "dealbot-x",
+    storageBucket: "dealbot-x.firebasestorage.app",
+    messagingSenderId: "436579562604",
+    appId: "1:436579562604:web:04aa58fb09cc61fafb1449"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.fbFns = { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy, onSnapshot };
+
+  // Load all data on start
+  loadDashboard();
+  loadCustomers();
+  loadUdhari();
+  loadPayments();
+  loadInventory();
+  loadInvoices();
+
+  async function loadDashboard() {
+    await refreshDashboardStats();
+    updateAIInsight();
+  }
+
+  async function refreshDashboardStats() {
+    try {
+      const { collection, getDocs } = window.fbFns;
+      const db = window.db;
+
+      // Udhari
+      const uSnap = await getDocs(collection(db, 'udhari'));
+      let totalUdhari = 0;
+      let udhariCount = 0;
+      let recentUdhari = [];
+      uSnap.forEach(d => {
+        const data = d.data();
+        if (data.status !== 'paid') {
+          totalUdhari += Number(data.amount) || 0;
+          udhariCount++;
+          recentUdhari.push({ id: d.id, ...data });
+        }
+      });
+
+      document.getElementById('stat-udhari').textContent = 'Rs. ' + totalUdhari.toLocaleString('en-IN');
+      document.getElementById('stat-udhari-count').textContent = udhariCount + ' customers';
+      document.getElementById('udhari-badge').textContent = udhariCount;
+      document.getElementById('udhari-total').textContent = 'Rs. ' + totalUdhari.toLocaleString('en-IN');
+      document.getElementById('udhari-customers-count').textContent = udhariCount + ' customers';
+      document.getElementById('report-outstanding').textContent = 'Rs. ' + totalUdhari.toLocaleString('en-IN');
+
+      // Recent udhari on dashboard
+      const dul = document.getElementById('dashboard-udhari-list');
+      if (recentUdhari.length === 0) {
+        dul.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><div class="empty-title">No udhari yet</div><div>Add customers and track credit</div></div>';
+      } else {
+        dul.innerHTML = recentUdhari.slice(0, 5).map(u => `
+          <div class="udhari-item">
+            <div class="udhari-avatar">${u.customer ? u.customer[0].toUpperCase() : '?'}</div>
+            <div class="udhari-info">
+              <div class="udhari-name">${u.customer || '-'}</div>
+              <div class="udhari-date">${u.note || ''} · ${u.date || ''}</div>
+            </div>
+            <div class="udhari-amount">Rs. ${Number(u.amount).toLocaleString('en-IN')}</div>
+          </div>`).join('');
+      }
+
+      // Payments
+      const pSnap = await getDocs(collection(db, 'payments'));
+      let totalPayments = 0;
+      let todayPayments = 0;
+      let recentPayments = [];
+      const today = new Date().toLocaleDateString('en-IN');
+      pSnap.forEach(d => {
+        const data = d.data();
+        totalPayments += Number(data.amount) || 0;
+        if (data.date === today) todayPayments += Number(data.amount) || 0;
+        recentPayments.push({ id: d.id, ...data });
+      });
+
+      document.getElementById('stat-sales').textContent = 'Rs. ' + todayPayments.toLocaleString('en-IN');
+      document.getElementById('stat-upi').textContent = 'Rs. ' + todayPayments.toLocaleString('en-IN');
+      document.getElementById('stat-profit').textContent = 'Rs. ' + todayPayments.toLocaleString('en-IN');
+      document.getElementById('report-payments').textContent = 'Rs. ' + totalPayments.toLocaleString('en-IN');
+      document.getElementById('report-sales').textContent = 'Rs. ' + totalPayments.toLocaleString('en-IN');
+
+      // Recent payments on dashboard
+      const dpl = document.getElementById('dashboard-payment-list');
+      if (recentPayments.length === 0) {
+        dpl.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><div class="empty-title">No payments yet</div><div>Log UPI and cash payments</div></div>';
+      } else {
+        dpl.innerHTML = recentPayments.slice(-5).reverse().map(p => `
+          <div class="udhari-item">
+            <div class="udhari-avatar" style="background:linear-gradient(135deg,#27500A,#4EC994)">${p.customer ? p.customer[0].toUpperCase() : '?'}</div>
+            <div class="udhari-info">
+              <div class="udhari-name">${p.customer || '-'}</div>
+              <div class="udhari-date">${p.type || 'Payment'} · ${p.date || ''}</div>
+            </div>
+            <div class="udhari-amount" style="color:var(--green)">Rs. ${Number(p.amount).toLocaleString('en-IN')}</div>
+          </div>`).join('');
+      }
+
+      // Customers
+      const cSnap = await getDocs(collection(db, 'customers'));
+      document.getElementById('report-customers').textContent = cSnap.size;
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function updateAIInsight() {
+    const hour = new Date().getHours();
+    let greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('ai-insight').innerHTML =
+      `${greeting}! Check your <span>udhari balance</span> and send reminders to customers with pending payments. Use the <span>GST Invoice</span> tool to generate instant invoices for your customers today.`;
+  }
+
+  // ── CUSTOMERS ──
+  async function loadCustomers() {
+    try {
+      const snap = await getDocs(collection(window.db, 'customers'));
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      window._customers = rows;
+      renderCustomers(rows);
+      document.getElementById('report-customers').textContent = rows.length;
+    } catch (e) {}
+  }
+
+  function renderCustomers(rows) {
+    const tbody = document.getElementById('customers-table-body');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><div class="empty-title">No customers added</div><div>Click "Add Customer" to get started</div></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(c => `
+      <tr>
+        <td><strong>${c.name || '-'}</strong></td>
+        <td>${c.phone || '-'}</td>
+        <td style="color:var(--red);font-weight:500;">Rs. ${Number(c.udhari || 0).toLocaleString('en-IN')}</td>
+        <td>${c.lastVisit || c.date || '-'}</td>
+        <td><span class="badge ${Number(c.udhari) > 0 ? 'badge-red' : 'badge-green'}">${Number(c.udhari) > 0 ? 'Has Udhari' : 'Clear'}</span></td>
+        <td>
+          <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;" onclick="openAddUdhariForCustomer('${c.name}','${c.phone}')">+ Udhari</button>
+        </td>
+      </tr>`).join('');
+  }
+
+  window.filterCustomers = (val) => {
+    const filtered = (window._customers || []).filter(c =>
+      (c.name || '').toLowerCase().includes(val.toLowerCase()) ||
+      (c.phone || '').includes(val)
+    );
+    renderCustomers(filtered);
+  };
+
+  // ── UDHARI ──
+  async function loadUdhari() {
+    try {
+      const snap = await getDocs(collection(window.db, 'udhari'));
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      window._udhari = rows;
+      renderUdhari(rows.filter(u => u.status !== 'paid'));
+    } catch (e) {}
+  }
+
+  function renderUdhari(rows) {
+    const tbody = document.getElementById('udhari-table-body');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><div class="empty-title">No udhari records</div><div>Add udhari from the Customers page</div></div></td></tr>';
+      return;
+    }
+    const today = new Date();
+    tbody.innerHTML = rows.map(u => {
+      const added = new Date(u.dateAdded || u.date);
+      const days = Math.floor((today - added) / (1000 * 60 * 60 * 24));
+      const badge = days > 14 ? 'badge-red' : days > 7 ? 'badge-amber' : 'badge-purple';
+      return `<tr>
+        <td><strong>${u.customer || '-'}</strong></td>
+        <td>${u.phone || '-'}</td>
+        <td style="color:var(--red);font-weight:600;">Rs. ${Number(u.amount).toLocaleString('en-IN')}</td>
+        <td>${u.date || '-'}</td>
+        <td><span class="badge ${badge}">${days} days</span></td>
+        <td style="display:flex;gap:6px;">
+          <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;" onclick="sendWhatsAppReminder('${u.phone}','${u.customer}',${u.amount})">Remind</button>
+          <button class="btn btn-primary" style="padding:5px 10px;font-size:11px;" onclick="markUdhariPaid('${u.id}')">Paid</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── PAYMENTS ──
+  async function loadPayments() {
+    try {
+      const snap = await getDocs(collection(window.db, 'payments'));
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      window._payments = rows;
+      renderPayments(rows);
+    } catch (e) {}
+  }
+
+  function renderPayments(rows) {
+    const tbody = document.getElementById('payments-table-body');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><div class="empty-title">No payments recorded</div><div>Click "Add Payment" to log a payment</div></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = [...rows].reverse().map(p => `
+      <tr>
+        <td><strong>${p.customer || '-'}</strong></td>
+        <td style="color:var(--green);font-weight:600;">Rs. ${Number(p.amount).toLocaleString('en-IN')}</td>
+        <td><span class="badge badge-purple">${p.type || 'Payment'}</span></td>
+        <td>${p.date || '-'}</td>
+        <td style="color:var(--muted)">${p.note || '-'}</td>
+      </tr>`).join('');
+  }
+
+  window.filterPayments = (val) => {
+    const filtered = val === 'all' ? window._payments : (window._payments || []).filter(p => p.type === val);
+    renderPayments(filtered);
+  };
+
+  // ── INVENTORY ──
+  async function loadInventory() {
+    try {
+      const snap = await getDocs(collection(window.db, 'inventory'));
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      window._inventory = rows;
+      renderInventory(rows);
+    } catch (e) {}
+  }
+
+  function renderInventory(rows) {
+    const tbody = document.getElementById('inventory-table-body');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg><div class="empty-title">No inventory items</div><div>Click "Add Item" to start tracking stock</div></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = rows.map(i => {
+      const isLow = Number(i.stock) <= Number(i.minStock);
+      return `<tr>
+        <td><strong>${i.name || '-'}</strong></td>
+        <td style="font-weight:600;">${i.stock || 0}</td>
+        <td style="color:var(--muted)">${i.minStock || 0}</td>
+        <td>Rs. ${Number(i.price || 0).toLocaleString('en-IN')}</td>
+        <td><span class="badge ${isLow ? 'badge-red' : 'badge-green'}">${isLow ? 'Low Stock' : 'In Stock'}</span></td>
+        <td>
+          <button class="btn btn-ghost" style="padding:5px 10px;font-size:11px;" onclick="deleteInventoryItem('${i.id}')">Remove</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  window.filterInventory = (val) => {
+    const filtered = (window._inventory || []).filter(i => (i.name || '').toLowerCase().includes(val.toLowerCase()));
+    renderInventory(filtered);
+  };
+
+  // ── GST INVOICES ──
+  async function loadInvoices() {
+    try {
+      const snap = await getDocs(collection(window.db, 'invoices'));
+      const rows = [];
+      snap.forEach(d => rows.push({ id: d.id, ...d.data() }));
+      renderInvoices(rows);
+    } catch (e) {}
+  }
+
+  function renderInvoices(rows) {
+    const el = document.getElementById('gst-invoice-list');
+    if (!rows.length) {
+      el.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div class="empty-title">No invoices yet</div><div>Generate your first GST invoice</div></div>';
+      return;
+    }
+    el.innerHTML = [...rows].reverse().map(inv => `
+      <div class="udhari-item">
+        <div class="udhari-avatar" style="background:linear-gradient(135deg,#4A2E00,#E8A84A);font-size:10px;">INV</div>
+        <div class="udhari-info">
+          <div class="udhari-name">${inv.customer || '-'} — ${inv.item || ''}</div>
+          <div class="udhari-date">GST ${inv.gstRate || 0}% · ${inv.date || ''}</div>
+        </div>
+        <div class="udhari-amount" style="color:var(--amber)">Rs. ${Number(inv.total || 0).toLocaleString('en-IN')}</div>
+      </div>`).join('');
+  }
+
+  // ── EXPOSE TO WINDOW ──
+  window._loadAll = async () => {
+    await loadDashboard();
+    await loadCustomers();
+    await loadUdhari();
+    await loadPayments();
+    await loadInventory();
+    await loadInvoices();
+  };
+
+  window.addCustomer = async () => {
+    const name = document.getElementById('c-name').value.trim();
+    const phone = document.getElementById('c-phone').value.trim();
+    const address = document.getElementById('c-address').value.trim();
+    const udhari = Number(document.getElementById('c-udhari').value) || 0;
+    if (!name) { showToast('Enter customer name', 'error'); return; }
+    try {
+      await addDoc(collection(window.db, 'customers'), {
+        name, phone, address, udhari,
+        date: new Date().toLocaleDateString('en-IN'),
+        lastVisit: new Date().toLocaleDateString('en-IN')
+      });
+      if (udhari > 0) {
+        await addDoc(collection(window.db, 'udhari'), {
+          customer: name, phone, amount: udhari,
+          note: 'Initial udhari',
+          date: new Date().toLocaleDateString('en-IN'),
+          dateAdded: new Date().toISOString(),
+          status: 'pending'
+        });
+      }
+      closeModal('modal-customer');
+      showToast('Customer added!', 'success');
+      ['c-name','c-phone','c-address','c-udhari'].forEach(id => document.getElementById(id).value = '');
+      await window._loadAll();
+    } catch (e) { showToast('Error: ' + e.message, 'error'); }
+  };
+
+  window.addPayment = async () => {
+    const customer = document.getElementById('p-customer').value.trim();
+    const amount = Number(document.getElementById('p-amount').value);
+    const type = document.getElementById('p-type').value;
+    const note = document.getElementById('p-note').value.trim();
+    if (!customer || !amount) { showToast('Fill all required fields', 'error'); return; }
+    try {
+      await addDoc(collection(window.db, 'payments'), {
+        customer, amount, type, note,
+        date: new Date().toLocaleDateString('en-IN')
+      });
+      closeModal('modal-payment');
+      showToast('Payment logged!', 'success');
+      ['p-customer','p-amount','p-note'].forEach(id => document.getElementById(id).value = '');
+      await window._loadAll();
+    } catch (e) { showToast('Error: ' + e.message, 'error'); }
+  };
+
+  window.addUdhari = async () => {
+    const customer = document.getElementById('u-customer').value.trim();
+    const phone = document.getElementById('u-phone').value.trim();
+    const amount = Number(document.getElementById('u-amount').value);
+    const note = document.getElementById('u-note').value.trim();
+    if (!customer || !amount) { showToast('Fill all required fields', 'error'); return; }
+    try {
+      await addDoc(collection(window.db, 'udhari'), {
+        customer, phone, amount, note,
+        date: new Date().toLocaleDateString('en-IN'),
+        dateAdded: new Date().toISOString(),
+        status: 'pending'
+      });
+      closeModal('modal-udhari');
+      showToast('Udhari added!', 'success');
+      ['u-customer','u-phone','u-amount','u-note'].forEach(id => document.getElementById(id).value = '');
+      await window._loadAll();
+    } catch (e) { showToast('Error: ' + e.message, 'error'); }
+  };
+
+  window.addInventoryItem = async () => {
+    const name = document.getElementById('i-name').value.trim();
+    const stock = Number(document.getElementById('i-stock').value);
+    const minStock = Number(document.getElementById('i-min').value) || 5;
+    const price = Number(document.getElementById('i-price').value) || 0;
+    if (!name) { showToast('Enter product name', 'error'); return; }
+    try {
+      await addDoc(collection(window.db, 'inventory'), { name, stock, minStock, price });
+      closeModal('modal-inventory');
+      showToast('Item added!', 'success');
+      ['i-name','i-stock','i-min','i-price'].forEach(id => document.getElementById(id).value = '');
+      await loadInventory();
+    } catch (e) { showToast('Error: ' + e.message, 'error'); }
+  };
+
+  window.deleteInventoryItem = async (id) => {
+    try {
+      await deleteDoc(doc(window.db, 'inventory', id));
+      showToast('Item removed', 'success');
+      await loadInventory();
+    } catch (e) { showToast('Error', 'error'); }
+  };
+
+  window.markUdhariPaid = async (id) => {
+    try {
+      await updateDoc(doc(window.db, 'udhari', id), { status: 'paid' });
+      showToast('Marked as paid!', 'success');
+      await window._loadAll();
+    } catch (e) { showToast('Error', 'error'); }
+  };
+
+  window.generateGSTInvoice = async () => {
+    const customer = document.getElementById('gst-customer').value.trim();
+    const item = document.getElementById('gst-item').value.trim();
+    const amount = Number(document.getElementById('gst-amount').value);
+    const rate = Number(document.getElementById('gst-rate').value);
+    if (!customer || !amount) { showToast('Fill customer and amount', 'error'); return; }
+    const gst = (amount * rate) / 100;
+    const total = amount + gst;
+    try {
+      await addDoc(collection(window.db, 'invoices'), {
+        customer, item, baseAmount: amount, gstRate: rate, gstAmount: gst, total,
+        date: new Date().toLocaleDateString('en-IN')
+      });
+      showToast('Invoice generated!', 'success');
+      ['gst-customer','gst-phone','gst-item','gst-amount'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('gst-preview').style.display = 'none';
+      await loadInvoices();
+    } catch (e) { showToast('Error: ' + e.message, 'error'); }
+  };
+
+  window.openAddUdhariForCustomer = (name, phone) => {
+    document.getElementById('u-customer').value = name;
+    document.getElementById('u-phone').value = phone;
+    document.getElementById('modal-udhari').classList.add('open');
+  };
+
+  window.sendWhatsAppReminder = (phone, name, amount) => {
+    if (!phone) { showToast('No phone number for this customer', 'error'); return; }
+    const msg = encodeURIComponent(`Vanakkam ${name}! Ungal udhari Rs.${amount} pending ullathu. Convenient-a irundha settle pannunga. - Dealbot.X`);
+    window.open(`https://wa.me/91${phone}?text=${msg}`, '_blank');
+    showToast('Opening WhatsApp...', 'success');
+    document.getElementById('udhari-reminders').textContent =
+      Number(document.getElementById('udhari-reminders').textContent) + 1;
+  };
+
+  window.sendAllReminders = () => {
+    const rows = window._udhari || [];
+    const pending = rows.filter(u => u.status !== 'paid' && u.phone);
+    if (!pending.length) { showToast('No customers with phone numbers to remind', 'error'); return; }
+    pending.forEach((u, i) => {
+      setTimeout(() => {
+        const msg = encodeURIComponent(`Vanakkam ${u.customer}! Ungal udhari Rs.${u.amount} pending ullathu. - Dealbot.X`);
+        window.open(`https://wa.me/91${u.phone}?text=${msg}`, '_blank');
+      }, i * 800);
+    });
+    showToast(`Sending reminders to ${pending.length} customers`, 'success');
+  };
+
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast show ${type}`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  window.showToast = showToast;
+</script>
+
+<script>
+  // Date
+  const now = new Date();
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  // Navigation
+  const pageConfig = {
+    dashboard: { title: 'Dashboard', btn: 'Add Customer', modal: 'modal-customer' },
+    customers: { title: 'Customers', btn: 'Add Customer', modal: 'modal-customer' },
+    udhari:    { title: 'Udhari Ledger', btn: 'Add Udhari', modal: 'modal-udhari' },
+    payments:  { title: 'Payments', btn: 'Add Payment', modal: 'modal-payment' },
+    inventory: { title: 'Inventory', btn: 'Add Item', modal: 'modal-inventory' },
+    gst:       { title: 'GST Invoice', btn: null, modal: null },
+    reports:   { title: 'Reports', btn: null, modal: null },
+  };
+
+  window.showPage = (name, el) => {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    if (el) el.classList.add('active');
+    const cfg = pageConfig[name];
+    document.getElementById('page-title').textContent = cfg.title;
+    const btn = document.getElementById('primary-action-btn');
+    if (cfg.btn) {
+      btn.style.display = 'inline-flex';
+      btn.childNodes[btn.childNodes.length - 1].textContent = ' ' + cfg.btn;
+      btn.onclick = () => { if (cfg.modal) document.getElementById(cfg.modal).classList.add('open'); };
+    } else {
+      btn.style.display = 'none';
+    }
+    if (window._loadAll) window._loadAll();
+  };
+
+  window.handlePrimaryAction = () => {
+    document.getElementById('modal-customer').classList.add('open');
+  };
+
+  window.closeModal = (id) => {
+    document.getElementById(id).classList.remove('open');
+  };
+
+  window.calcGST = () => {
+    const amount = Number(document.getElementById('gst-amount').value);
+    const rate = Number(document.getElementById('gst-rate').value);
+    if (!amount) { document.getElementById('gst-preview').style.display = 'none'; return; }
+    const gst = (amount * rate) / 100;
+    const total = amount + gst;
+    document.getElementById('gst-calc-result').innerHTML = `
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+        <span style="color:var(--muted);font-size:13px;">Base Amount</span>
+        <span style="font-weight:500;">Rs. ${amount.toLocaleString('en-IN')}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+        <span style="color:var(--muted);font-size:13px;">GST (${rate}%)</span>
+        <span style="font-weight:500;">Rs. ${gst.toLocaleString('en-IN')}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;">
+        <span style="color:var(--text);font-weight:600;font-size:14px;">Total</span>
+        <span style="color:var(--light-accent);font-weight:700;font-family:'Syne',sans-serif;">Rs. ${total.toLocaleString('en-IN')}</span>
+      </div>`;
+    document.getElementById('gst-preview').style.display = 'block';
+  };
+
+  // Close modal on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', (e) => { if (e.target === o) o.classList.remove('open'); });
+  });
+</script>
+</body>
+</html>
